@@ -1,0 +1,140 @@
+:root{
+      --accent:#6c63ff;
+      --muted:#6b7280;
+      --bg:#0f1724;
+      --card-bg: rgba(255, 48, 48, 0.03);
+      --glass: rgba(255,255,255,0.04);
+    }
+
+    html,body{
+      height:100%;
+      background:
+        radial-gradient(1200px 500px at 10% 10%, rgba(99, 224, 255, 0.12), transparent 5%),
+        radial-gradient(1000px 400px at 95% 90%, rgba(0,178,255,0.06), transparent 5%),
+        linear-gradient(180deg,#071029 0%, #08111b 100%);
+      color:#e6eef8;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      margin:0;
+    }
+
+    /* Header */
+    header.navbar{
+      background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      backdrop-filter: blur(6px);
+    }
+    .brand { font-weight:700; color:var(--accent); letter-spacing:0.6px; }
+
+    /* Layout */
+    .sidebar {
+      min-width: 240px;
+      max-width: 280px;
+      height: calc(100vh - 56px);
+      padding: 1rem;
+      border-right: 1px solid rgba(255,255,255,0.03);
+      background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    }
+    .sidebar .nav-link {
+      color: #cbd5e1;
+      border-radius:8px;
+    }
+    .sidebar .nav-link.active {
+      background: linear-gradient(90deg, rgba(107, 99, 255, 0.516), rgba(0,178,255,0.02));
+      color: white;
+      box-shadow: 0 6px 18px rgba(108,99,255,0.06);
+    }
+
+    main#main-content {
+      min-height: calc(100vh - 56px);
+      padding: 2rem;
+      transition: all .22s ease;
+    }
+
+    .card-app {
+      background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 12px;
+      padding: 1.2rem;
+      box-shadow: 0 8px 30px rgba(2,6,23,0.6);
+    }
+
+    /* Tiny decorative banner */
+    .project-banner {
+      display:flex;
+      gap:1rem;
+      align-items:center;
+      padding: .7rem 1rem;
+      border-radius:10px;
+      background: linear-gradient(90deg, rgba(108,99,255,0.12), rgba(0,178,255,0.02));
+      margin-bottom: 1.1rem;
+    }
+
+    .muted { color: var(--muted); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
+
+    /* Editor */
+    .code-frame {
+      background: #071026;
+      border-radius: 8px;
+      padding: 0.6rem;
+      border: 1px solid rgba(255,255,255,0.03);
+      min-height: 260px;
+    }
+    textarea.code-input {
+      width:100%;
+      background: transparent;
+      border: none;
+      color: #e6eef8;
+      resize: vertical;
+      min-height: 220px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace;
+      font-size: 13.5px;
+      outline:none;
+    }
+
+    /* PDF viewer responsive */
+    .pdf-frame {
+      width:100%;
+      height:650px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.03);
+      background: #000;
+      overflow:hidden;
+    }
+
+    /* Results */
+    .results-panel {
+      margin-top:1rem;
+      display:flex;
+      gap:1rem;
+      flex-wrap:wrap;
+    }
+    .results-panel > .card {
+      flex:1 1 48%;
+      min-width:280px;
+    }
+
+    /* Small helpers */
+    .small-muted { font-size:0.9rem; color: #9aa4b2; }
+
+    /* animation */
+    .fade-in { animation: fadeIn .28s ease both; }
+    @keyframes fadeIn { from { opacity:0; transform: translateY(6px);} to {opacity:1; transform:none;} }
+
+    code.txt-highlight,
+    .txt-highlight {
+      color: #df6ff3 !important;
+      font-weight: 600;
+    }
+
+/* Aplicar color a todos los elementos <code> */
+code,
+pre code {
+  color: #df6ff3 !important;
+  font-weight: 600;
+}
+
+/* Asegurar coincidencia dentro de contenedores mono */
+.mono code {
+  color: #df6ff3 !important;
+}

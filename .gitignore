@@ -1,0 +1,23 @@
+# Entornos virtuales
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Archivos temporales
+*.log
+*.tmp
+*.bak
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
+
+# Configuración local de IDEs
+.vscode/
+.idea/
+
+# Archivos de dependencias grandes
+node_modules/
+dist/
+build/

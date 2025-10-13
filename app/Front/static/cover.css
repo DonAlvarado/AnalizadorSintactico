@@ -1,0 +1,126 @@
+:root {
+  --accent: #df6ff3; /* color principal (cambiado) */
+  --bg-dark: #071029;
+  --muted: #adb5bd;
+}
+
+/* Base */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  color: #fff;
+  background: 
+    var(--bg-dark)
+    url("Images/JavaLogo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  overflow: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: 
+    linear-gradient(rgba(), rgba())
+    url("Images/JavaLogo.png");
+  background-repeat: no-repeat;  
+  filter: blur(0px) brightness(1.05);
+  background-size: 35%;
+  background-position: center;
+  z-index: -1;
+}
+
+/* Contenedor principal */
+.cover-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  padding: 2rem;
+  animation: fadeIn 1s ease both;
+}
+
+.cover-heading {
+  font-size: 3rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
+}
+
+.lead {
+  font-size: 1.2rem;
+  color: var(--muted);
+  margin-bottom: 2rem;
+}
+
+/* Botón principal: sustituido el amarillo por un gradiente con --accent y un azul profundo */
+.btn-primary {
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(90deg, var(--accent), #43ddeb);
+  border: none;
+  font-weight: 600;
+  color: #ffffff;
+  padding: 0.8rem 2.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  box-shadow: 0 8px 20px rgba(6, 182, 212, 0.22);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(90deg, #43ddeb, var(--accent));
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(6, 182, 212, 0.28);
+}
+
+/* Efecto de brillo sobre el botón */
+.btn-primary::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.25), transparent 60%);
+  transform: skewX(-20deg);
+  transition: 0.5s;
+  pointer-events: none;
+}
+
+.btn-primary:hover::after {
+  left: 130%;
+}
+
+/* Footer */
+.footer {
+  position: fixed;
+  bottom: 15px;
+  width: 100%;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.footer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
