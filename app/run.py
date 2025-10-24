@@ -1,5 +1,5 @@
 # app/run.py
-from app import create_app  # ahora import absoluto correcto
+from app import create_app
 
 app = create_app()
 

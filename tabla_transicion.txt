@@ -1,0 +1,543 @@
+== Tabla LL(1) ==
+
+Columnas (terminales): !, !=, $, &&, (, ), *, +, ,, -, ., /, ;, <, <=, =, ==, >, >=, String, abstract, boolean, break, char, char_literal, class, continue, double, else, false, final, for, id, if, import, int, number, private, protected, public, return, static, string_literal, true, void, while, {, ||, }
+
+[Prog]
+  (Prog, abstract) -> ImportList ClassDecl
+  (Prog, class) -> ImportList ClassDecl
+  (Prog, final) -> ImportList ClassDecl
+  (Prog, import) -> ImportList ClassDecl
+  (Prog, private) -> ImportList ClassDecl
+  (Prog, protected) -> ImportList ClassDecl
+  (Prog, public) -> ImportList ClassDecl
+  (Prog, static) -> ImportList ClassDecl
+
+[ImportList]
+  (ImportList, abstract) -> ε
+  (ImportList, class) -> ε
+  (ImportList, final) -> ε
+  (ImportList, import) -> ImportDecl ImportList
+  (ImportList, private) -> ε
+  (ImportList, protected) -> ε
+  (ImportList, public) -> ε
+  (ImportList, static) -> ε
+
+[ImportDecl]
+  (ImportDecl, import) -> import ImportPath ;
+
+[ImportPath]
+  (ImportPath, id) -> id ImportPathTail
+
+[ImportPathTail]
+  (ImportPathTail, .) -> . ImportPathSeg
+  (ImportPathTail, ;) -> ε
+
+[ImportPathSeg]
+  (ImportPathSeg, *) -> *
+  (ImportPathSeg, id) -> id ImportPathTail
+
+[ClassDecl]
+  (ClassDecl, abstract) -> ModifiersOpt class id { MemberList }
+  (ClassDecl, class) -> ModifiersOpt class id { MemberList }
+  (ClassDecl, final) -> ModifiersOpt class id { MemberList }
+  (ClassDecl, private) -> ModifiersOpt class id { MemberList }
+  (ClassDecl, protected) -> ModifiersOpt class id { MemberList }
+  (ClassDecl, public) -> ModifiersOpt class id { MemberList }
+  (ClassDecl, static) -> ModifiersOpt class id { MemberList }
+
+[ModifiersOpt]
+  (ModifiersOpt, String) -> ε
+  (ModifiersOpt, abstract) -> Modifier ModifiersOpt
+  (ModifiersOpt, boolean) -> ε
+  (ModifiersOpt, char) -> ε
+  (ModifiersOpt, class) -> ε
+  (ModifiersOpt, double) -> ε
+  (ModifiersOpt, final) -> Modifier ModifiersOpt
+  (ModifiersOpt, int) -> ε
+  (ModifiersOpt, private) -> Modifier ModifiersOpt
+  (ModifiersOpt, protected) -> Modifier ModifiersOpt
+  (ModifiersOpt, public) -> Modifier ModifiersOpt
+  (ModifiersOpt, static) -> Modifier ModifiersOpt
+  (ModifiersOpt, void) -> ε
+
+[Modifier]
+  (Modifier, abstract) -> abstract
+  (Modifier, final) -> final
+  (Modifier, private) -> private
+  (Modifier, protected) -> protected
+  (Modifier, public) -> public
+  (Modifier, static) -> static
+
+[MemberList]
+  (MemberList, String) -> Member MemberList
+  (MemberList, abstract) -> Member MemberList
+  (MemberList, boolean) -> Member MemberList
+  (MemberList, char) -> Member MemberList
+  (MemberList, double) -> Member MemberList
+  (MemberList, final) -> Member MemberList
+  (MemberList, int) -> Member MemberList
+  (MemberList, private) -> Member MemberList
+  (MemberList, protected) -> Member MemberList
+  (MemberList, public) -> Member MemberList
+  (MemberList, static) -> Member MemberList
+  (MemberList, void) -> Member MemberList
+  (MemberList, }) -> ε
+
+[Member]
+  (Member, String) -> ModifiersOpt TypeOrVoid id MemberRest
+  (Member, abstract) -> ModifiersOpt TypeOrVoid id MemberRest
+  (Member, boolean) -> ModifiersOpt TypeOrVoid id MemberRest
+  (Member, char) -> ModifiersOpt TypeOrVoid id MemberRest
+  (Member, double) -> ModifiersOpt TypeOrVoid id MemberRest
+  (Member, final) -> ModifiersOpt TypeOrVoid id MemberRest
+  (Member, int) -> ModifiersOpt TypeOrVoid id MemberRest
+  (Member, private) -> ModifiersOpt TypeOrVoid id MemberRest
+  (Member, protected) -> ModifiersOpt TypeOrVoid id MemberRest
+  (Member, public) -> ModifiersOpt TypeOrVoid id MemberRest
+  (Member, static) -> ModifiersOpt TypeOrVoid id MemberRest
+  (Member, void) -> ModifiersOpt TypeOrVoid id MemberRest
+
+[MemberRest]
+  (MemberRest, () -> ( ParamList ) Block
+  (MemberRest, ,) -> FieldTail ;
+  (MemberRest, ;) -> FieldTail ;
+  (MemberRest, =) -> FieldTail ;
+
+[FieldTail]
+  (FieldTail, ,) -> InitOpt FieldRest
+  (FieldTail, ;) -> InitOpt FieldRest
+  (FieldTail, =) -> InitOpt FieldRest
+
+[FieldRest]
+  (FieldRest, ,) -> , id InitOpt FieldRest
+  (FieldRest, ;) -> ε
+
+[InitOpt]
+  (InitOpt, ,) -> ε
+  (InitOpt, ;) -> ε
+  (InitOpt, =) -> = Expr
+
+[TypeOrVoid]
+  (TypeOrVoid, String) -> Type
+  (TypeOrVoid, boolean) -> Type
+  (TypeOrVoid, char) -> Type
+  (TypeOrVoid, double) -> Type
+  (TypeOrVoid, int) -> Type
+  (TypeOrVoid, void) -> void
+
+[Type]
+  (Type, String) -> String
+  (Type, boolean) -> boolean
+  (Type, char) -> char
+  (Type, double) -> double
+  (Type, int) -> int
+
+[ParamList]
+  (ParamList, )) -> ε
+  (ParamList, String) -> Param ParamRest
+  (ParamList, boolean) -> Param ParamRest
+  (ParamList, char) -> Param ParamRest
+  (ParamList, double) -> Param ParamRest
+  (ParamList, int) -> Param ParamRest
+
+[ParamRest]
+  (ParamRest, )) -> ε
+  (ParamRest, ,) -> , Param ParamRest
+
+[Param]
+  (Param, String) -> Type id
+  (Param, boolean) -> Type id
+  (Param, char) -> Type id
+  (Param, double) -> Type id
+  (Param, int) -> Type id
+
+[Block]
+  (Block, {) -> { StmtList }
+
+[StmtList]
+  (StmtList, () -> Stmt StmtList
+  (StmtList, String) -> Stmt StmtList
+  (StmtList, boolean) -> Stmt StmtList
+  (StmtList, break) -> Stmt StmtList
+  (StmtList, char) -> Stmt StmtList
+  (StmtList, char_literal) -> Stmt StmtList
+  (StmtList, continue) -> Stmt StmtList
+  (StmtList, double) -> Stmt StmtList
+  (StmtList, false) -> Stmt StmtList
+  (StmtList, for) -> Stmt StmtList
+  (StmtList, id) -> Stmt StmtList
+  (StmtList, if) -> Stmt StmtList
+  (StmtList, int) -> Stmt StmtList
+  (StmtList, number) -> Stmt StmtList
+  (StmtList, return) -> Stmt StmtList
+  (StmtList, string_literal) -> Stmt StmtList
+  (StmtList, true) -> Stmt StmtList
+  (StmtList, while) -> Stmt StmtList
+  (StmtList, {) -> Stmt StmtList
+  (StmtList, }) -> ε
+
+[Stmt]
+  (Stmt, () -> SimpleStmt
+  (Stmt, String) -> VarDeclStmt
+  (Stmt, boolean) -> VarDeclStmt
+  (Stmt, break) -> BreakStmt
+  (Stmt, char) -> VarDeclStmt
+  (Stmt, char_literal) -> SimpleStmt
+  (Stmt, continue) -> ContinueStmt
+  (Stmt, double) -> VarDeclStmt
+  (Stmt, false) -> SimpleStmt
+  (Stmt, for) -> ForStmt
+  (Stmt, id) -> SimpleStmt
+  (Stmt, if) -> IfStmt
+  (Stmt, int) -> VarDeclStmt
+  (Stmt, number) -> SimpleStmt
+  (Stmt, return) -> ReturnStmt
+  (Stmt, string_literal) -> SimpleStmt
+  (Stmt, true) -> SimpleStmt
+  (Stmt, while) -> WhileStmt
+  (Stmt, {) -> Block
+
+[VarDeclStmt]
+  (VarDeclStmt, String) -> Type VarDeclList ;
+  (VarDeclStmt, boolean) -> Type VarDeclList ;
+  (VarDeclStmt, char) -> Type VarDeclList ;
+  (VarDeclStmt, double) -> Type VarDeclList ;
+  (VarDeclStmt, int) -> Type VarDeclList ;
+
+[VarDeclList]
+  (VarDeclList, id) -> VarDecl VarDeclRest
+
+[VarDeclRest]
+  (VarDeclRest, ,) -> , VarDecl VarDeclRest
+  (VarDeclRest, ;) -> ε
+
+[VarDecl]
+  (VarDecl, id) -> id InitOpt
+
+[SimpleStmt]
+  (SimpleStmt, () -> AssignOrCall ;
+  (SimpleStmt, char_literal) -> AssignOrCall ;
+  (SimpleStmt, false) -> AssignOrCall ;
+  (SimpleStmt, id) -> AssignOrCall ;
+  (SimpleStmt, number) -> AssignOrCall ;
+  (SimpleStmt, string_literal) -> AssignOrCall ;
+  (SimpleStmt, true) -> AssignOrCall ;
+
+[AssignOrCall]
+  (AssignOrCall, () -> PrimaryExpr AssignTail
+  (AssignOrCall, char_literal) -> PrimaryExpr AssignTail
+  (AssignOrCall, false) -> PrimaryExpr AssignTail
+  (AssignOrCall, id) -> PrimaryExpr AssignTail
+  (AssignOrCall, number) -> PrimaryExpr AssignTail
+  (AssignOrCall, string_literal) -> PrimaryExpr AssignTail
+  (AssignOrCall, true) -> PrimaryExpr AssignTail
+
+[AssignTail]
+  (AssignTail, )) -> ε
+  (AssignTail, ,) -> ε
+  (AssignTail, ;) -> ε
+  (AssignTail, =) -> = Expr
+
+[IfStmt]
+  (IfStmt, if) -> if ( Expr ) Stmt ElseOpt
+
+[ElseOpt]
+  (ElseOpt, () -> ε
+  (ElseOpt, String) -> ε
+  (ElseOpt, boolean) -> ε
+  (ElseOpt, break) -> ε
+  (ElseOpt, char) -> ε
+  (ElseOpt, char_literal) -> ε
+  (ElseOpt, continue) -> ε
+  (ElseOpt, double) -> ε
+  (ElseOpt, else) -> else Stmt
+  (ElseOpt, false) -> ε
+  (ElseOpt, for) -> ε
+  (ElseOpt, id) -> ε
+  (ElseOpt, if) -> ε
+  (ElseOpt, int) -> ε
+  (ElseOpt, number) -> ε
+  (ElseOpt, return) -> ε
+  (ElseOpt, string_literal) -> ε
+  (ElseOpt, true) -> ε
+  (ElseOpt, while) -> ε
+  (ElseOpt, {) -> ε
+  (ElseOpt, }) -> ε
+
+[WhileStmt]
+  (WhileStmt, while) -> while ( Expr ) Stmt
+
+[ForStmt]
+  (ForStmt, for) -> for ( ForInitOpt ; ExprOpt ; ForUpdateOpt ) Stmt
+
+[ForInitOpt]
+  (ForInitOpt, () -> AssignOrCallList
+  (ForInitOpt, ;) -> ε
+  (ForInitOpt, char_literal) -> AssignOrCallList
+  (ForInitOpt, false) -> AssignOrCallList
+  (ForInitOpt, id) -> AssignOrCallList
+  (ForInitOpt, number) -> AssignOrCallList
+  (ForInitOpt, string_literal) -> AssignOrCallList
+  (ForInitOpt, true) -> AssignOrCallList
+
+[ForUpdateOpt]
+  (ForUpdateOpt, () -> AssignOrCallList
+  (ForUpdateOpt, )) -> ε
+  (ForUpdateOpt, char_literal) -> AssignOrCallList
+  (ForUpdateOpt, false) -> AssignOrCallList
+  (ForUpdateOpt, id) -> AssignOrCallList
+  (ForUpdateOpt, number) -> AssignOrCallList
+  (ForUpdateOpt, string_literal) -> AssignOrCallList
+  (ForUpdateOpt, true) -> AssignOrCallList
+
+[AssignOrCallList]
+  (AssignOrCallList, () -> AssignOrCall AssignOrCallListRest
+  (AssignOrCallList, char_literal) -> AssignOrCall AssignOrCallListRest
+  (AssignOrCallList, false) -> AssignOrCall AssignOrCallListRest
+  (AssignOrCallList, id) -> AssignOrCall AssignOrCallListRest
+  (AssignOrCallList, number) -> AssignOrCall AssignOrCallListRest
+  (AssignOrCallList, string_literal) -> AssignOrCall AssignOrCallListRest
+  (AssignOrCallList, true) -> AssignOrCall AssignOrCallListRest
+
+[AssignOrCallListRest]
+  (AssignOrCallListRest, )) -> ε
+  (AssignOrCallListRest, ,) -> , AssignOrCall AssignOrCallListRest
+  (AssignOrCallListRest, ;) -> ε
+
+[ExprOpt]
+  (ExprOpt, !) -> Expr
+  (ExprOpt, () -> Expr
+  (ExprOpt, +) -> Expr
+  (ExprOpt, -) -> Expr
+  (ExprOpt, ;) -> ε
+  (ExprOpt, char_literal) -> Expr
+  (ExprOpt, false) -> Expr
+  (ExprOpt, id) -> Expr
+  (ExprOpt, number) -> Expr
+  (ExprOpt, string_literal) -> Expr
+  (ExprOpt, true) -> Expr
+
+[ReturnStmt]
+  (ReturnStmt, return) -> return ReturnExprOpt ;
+
+[ReturnExprOpt]
+  (ReturnExprOpt, !) -> Expr
+  (ReturnExprOpt, () -> Expr
+  (ReturnExprOpt, +) -> Expr
+  (ReturnExprOpt, -) -> Expr
+  (ReturnExprOpt, ;) -> ε
+  (ReturnExprOpt, char_literal) -> Expr
+  (ReturnExprOpt, false) -> Expr
+  (ReturnExprOpt, id) -> Expr
+  (ReturnExprOpt, number) -> Expr
+  (ReturnExprOpt, string_literal) -> Expr
+  (ReturnExprOpt, true) -> Expr
+
+[BreakStmt]
+  (BreakStmt, break) -> break ;
+
+[ContinueStmt]
+  (ContinueStmt, continue) -> continue ;
+
+[Expr]
+  (Expr, !) -> CondOrExpr
+  (Expr, () -> CondOrExpr
+  (Expr, +) -> CondOrExpr
+  (Expr, -) -> CondOrExpr
+  (Expr, char_literal) -> CondOrExpr
+  (Expr, false) -> CondOrExpr
+  (Expr, id) -> CondOrExpr
+  (Expr, number) -> CondOrExpr
+  (Expr, string_literal) -> CondOrExpr
+  (Expr, true) -> CondOrExpr
+
+[CondOrExpr]
+  (CondOrExpr, !) -> CondAndExpr CondOrRest
+  (CondOrExpr, () -> CondAndExpr CondOrRest
+  (CondOrExpr, +) -> CondAndExpr CondOrRest
+  (CondOrExpr, -) -> CondAndExpr CondOrRest
+  (CondOrExpr, char_literal) -> CondAndExpr CondOrRest
+  (CondOrExpr, false) -> CondAndExpr CondOrRest
+  (CondOrExpr, id) -> CondAndExpr CondOrRest
+  (CondOrExpr, number) -> CondAndExpr CondOrRest
+  (CondOrExpr, string_literal) -> CondAndExpr CondOrRest
+  (CondOrExpr, true) -> CondAndExpr CondOrRest
+
+[CondOrRest]
+  (CondOrRest, )) -> ε
+  (CondOrRest, ,) -> ε
+  (CondOrRest, ;) -> ε
+  (CondOrRest, ||) -> || CondAndExpr CondOrRest
+
+[CondAndExpr]
+  (CondAndExpr, !) -> RelExpr CondAndRest
+  (CondAndExpr, () -> RelExpr CondAndRest
+  (CondAndExpr, +) -> RelExpr CondAndRest
+  (CondAndExpr, -) -> RelExpr CondAndRest
+  (CondAndExpr, char_literal) -> RelExpr CondAndRest
+  (CondAndExpr, false) -> RelExpr CondAndRest
+  (CondAndExpr, id) -> RelExpr CondAndRest
+  (CondAndExpr, number) -> RelExpr CondAndRest
+  (CondAndExpr, string_literal) -> RelExpr CondAndRest
+  (CondAndExpr, true) -> RelExpr CondAndRest
+
+[CondAndRest]
+  (CondAndRest, &&) -> && RelExpr CondAndRest
+  (CondAndRest, )) -> ε
+  (CondAndRest, ,) -> ε
+  (CondAndRest, ;) -> ε
+  (CondAndRest, ||) -> ε
+
+[RelExpr]
+  (RelExpr, !) -> AddExpr RelRest
+  (RelExpr, () -> AddExpr RelRest
+  (RelExpr, +) -> AddExpr RelRest
+  (RelExpr, -) -> AddExpr RelRest
+  (RelExpr, char_literal) -> AddExpr RelRest
+  (RelExpr, false) -> AddExpr RelRest
+  (RelExpr, id) -> AddExpr RelRest
+  (RelExpr, number) -> AddExpr RelRest
+  (RelExpr, string_literal) -> AddExpr RelRest
+  (RelExpr, true) -> AddExpr RelRest
+
+[RelRest]
+  (RelRest, !=) -> != AddExpr RelRest
+  (RelRest, &&) -> ε
+  (RelRest, )) -> ε
+  (RelRest, ,) -> ε
+  (RelRest, ;) -> ε
+  (RelRest, <) -> < AddExpr RelRest
+  (RelRest, <=) -> <= AddExpr RelRest
+  (RelRest, ==) -> == AddExpr RelRest
+  (RelRest, >) -> > AddExpr RelRest
+  (RelRest, >=) -> >= AddExpr RelRest
+  (RelRest, ||) -> ε
+
+[AddExpr]
+  (AddExpr, !) -> MulExpr AddRest
+  (AddExpr, () -> MulExpr AddRest
+  (AddExpr, +) -> MulExpr AddRest
+  (AddExpr, -) -> MulExpr AddRest
+  (AddExpr, char_literal) -> MulExpr AddRest
+  (AddExpr, false) -> MulExpr AddRest
+  (AddExpr, id) -> MulExpr AddRest
+  (AddExpr, number) -> MulExpr AddRest
+  (AddExpr, string_literal) -> MulExpr AddRest
+  (AddExpr, true) -> MulExpr AddRest
+
+[AddRest]
+  (AddRest, !=) -> ε
+  (AddRest, &&) -> ε
+  (AddRest, )) -> ε
+  (AddRest, +) -> + MulExpr AddRest
+  (AddRest, ,) -> ε
+  (AddRest, -) -> - MulExpr AddRest
+  (AddRest, ;) -> ε
+  (AddRest, <) -> ε
+  (AddRest, <=) -> ε
+  (AddRest, ==) -> ε
+  (AddRest, >) -> ε
+  (AddRest, >=) -> ε
+  (AddRest, ||) -> ε
+
+[MulExpr]
+  (MulExpr, !) -> UnaryExpr MulRest
+  (MulExpr, () -> UnaryExpr MulRest
+  (MulExpr, +) -> UnaryExpr MulRest
+  (MulExpr, -) -> UnaryExpr MulRest
+  (MulExpr, char_literal) -> UnaryExpr MulRest
+  (MulExpr, false) -> UnaryExpr MulRest
+  (MulExpr, id) -> UnaryExpr MulRest
+  (MulExpr, number) -> UnaryExpr MulRest
+  (MulExpr, string_literal) -> UnaryExpr MulRest
+  (MulExpr, true) -> UnaryExpr MulRest
+
+[MulRest]
+  (MulRest, !=) -> ε
+  (MulRest, &&) -> ε
+  (MulRest, )) -> ε
+  (MulRest, *) -> * UnaryExpr MulRest
+  (MulRest, +) -> ε
+  (MulRest, ,) -> ε
+  (MulRest, -) -> ε
+  (MulRest, /) -> / UnaryExpr MulRest
+  (MulRest, ;) -> ε
+  (MulRest, <) -> ε
+  (MulRest, <=) -> ε
+  (MulRest, ==) -> ε
+  (MulRest, >) -> ε
+  (MulRest, >=) -> ε
+  (MulRest, ||) -> ε
+
+[UnaryExpr]
+  (UnaryExpr, !) -> UnaryOp UnaryExpr
+  (UnaryExpr, () -> PrimaryExpr
+  (UnaryExpr, +) -> UnaryOp UnaryExpr
+  (UnaryExpr, -) -> UnaryOp UnaryExpr
+  (UnaryExpr, char_literal) -> PrimaryExpr
+  (UnaryExpr, false) -> PrimaryExpr
+  (UnaryExpr, id) -> PrimaryExpr
+  (UnaryExpr, number) -> PrimaryExpr
+  (UnaryExpr, string_literal) -> PrimaryExpr
+  (UnaryExpr, true) -> PrimaryExpr
+
+[UnaryOp]
+  (UnaryOp, !) -> !
+  (UnaryOp, +) -> +
+  (UnaryOp, -) -> -
+
+[PrimaryExpr]
+  (PrimaryExpr, () -> ( Expr )
+  (PrimaryExpr, char_literal) -> literal
+  (PrimaryExpr, false) -> literal
+  (PrimaryExpr, id) -> id PrimaryTail
+  (PrimaryExpr, number) -> literal
+  (PrimaryExpr, string_literal) -> literal
+  (PrimaryExpr, true) -> literal
+
+[PrimaryTail]
+  (PrimaryTail, !=) -> ε
+  (PrimaryTail, &&) -> ε
+  (PrimaryTail, () -> ( ArgList ) PrimaryTail
+  (PrimaryTail, )) -> ε
+  (PrimaryTail, *) -> ε
+  (PrimaryTail, +) -> ε
+  (PrimaryTail, ,) -> ε
+  (PrimaryTail, -) -> ε
+  (PrimaryTail, .) -> . id PrimaryTail
+  (PrimaryTail, /) -> ε
+  (PrimaryTail, ;) -> ε
+  (PrimaryTail, <) -> ε
+  (PrimaryTail, <=) -> ε
+  (PrimaryTail, =) -> ε
+  (PrimaryTail, ==) -> ε
+  (PrimaryTail, >) -> ε
+  (PrimaryTail, >=) -> ε
+  (PrimaryTail, ||) -> ε
+
+[ArgList]
+  (ArgList, !) -> Expr ArgRest
+  (ArgList, () -> Expr ArgRest
+  (ArgList, )) -> ε
+  (ArgList, +) -> Expr ArgRest
+  (ArgList, -) -> Expr ArgRest
+  (ArgList, char_literal) -> Expr ArgRest
+  (ArgList, false) -> Expr ArgRest
+  (ArgList, id) -> Expr ArgRest
+  (ArgList, number) -> Expr ArgRest
+  (ArgList, string_literal) -> Expr ArgRest
+  (ArgList, true) -> Expr ArgRest
+
+[ArgRest]
+  (ArgRest, )) -> ε
+  (ArgRest, ,) -> , Expr ArgRest
+
+[literal]
+  (literal, char_literal) -> char_literal
+  (literal, false) -> false
+  (literal, number) -> number
+  (literal, string_literal) -> string_literal
+  (literal, true) -> true
+
+== Conflictos ==
+  Conflict (ElseOpt, else): existing=else Stmt vs new=ε

@@ -1,0 +1,12 @@
+import java.io.*;
+
+public class Mensaje {
+    String texto;
+    double valor;
+
+    public void saludar() {
+        texto = "Hola mundo";
+        valor = 3.14;
+        return;
+    }
+}

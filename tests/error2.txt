@@ -1,0 +1,9 @@
+import java.util.*
+
+public class Fallo {
+    public void probar() {
+        if (5 > ) {
+            return;
+        }
+    }
+}

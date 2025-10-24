@@ -1,0 +1,8 @@
+public class Mala {
+    int x
+    int y;
+
+    public int suma(int a, int b) {
+        return a + b
+    }
+}

@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Analizador Sintáctico — Panel</title>
   <link rel="icon" href="{{ url_for('static', filename='icons/cube.ico') }}">
-  
+
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="{{ url_for('static', filename='dashboard.css') }}" rel="stylesheet">
 </head>
 
-<body>
-  <header class="navbar navbar-expand-lg px-3">
+<body style="background-color:#0b0e1a; color:#fff;">
+  <header class="navbar navbar-expand-lg px-3" style="background:#071029;">
     <div class="container-fluid">
-      <a class="navbar-brand brand" href="#">Analizador Sintáctico</a>
+      <a class="navbar-brand text-light" href="#">Analizador Sintáctico</a>
       <div class="d-flex align-items-center gap-3">
-        <div class="small-muted">Usuario: <strong>Estudiante</strong></div>
+        <div class="text-light small">Usuario: <strong>Estudiante</strong></div>
       </div>
     </div>
   </header>
@@ -24,11 +24,12 @@
   <div class="d-flex">
     <!-- Sidebar -->
     <aside class="sidebar d-flex flex-column p-3" style="width:250px; background:#071029; min-height:100vh;">
-      <h6>Panel de opciones</h6>
+      <h6 class="text-light">Panel de opciones</h6>
       <nav class="nav flex-column mt-3">
-        <a class="nav-link active" data-view="welcome" href="#">Página principal</a>
-        <a class="nav-link" data-view="manual" href="#">Manual de usuario</a>
-        <a class="nav-link" data-view="analysis" href="#">Análisis</a>
+        <a class="nav-link text-light active" data-view="welcome" href="#">Página principal</a>
+        <a class="nav-link text-light" data-view="manual" href="#">Manual de usuario</a>
+        <a class="nav-link text-light" data-view="analysis" href="#">Análisis</a>
+        <a class="nav-link text-light" data-view="architecture" href="#">Diagrama de arquitectura</a>
       </nav>
     </aside>
 
@@ -48,8 +49,11 @@
     // ---------- Views ----------
     function showWelcome() {
       dynamicRoot.innerHTML = `
-        <h2>Página principal</h2>
-        <p>Bienvenido al Analizador Sintáctico Avanzado de Java. Aquí podrás analizar código, ver errores y generar reportes.</p>
+        <div class="text-center mt-5">
+          <h2>Página principal</h2>
+          <p class="lead mt-3">Bienvenido al Analizador Sintáctico Avanzado de Java.</p>
+          <p>Podrás analizar código fuente, revisar tokens detectados, ver errores léxicos o sintácticos y visualizar el árbol de derivación.</p>
+        </div>
       `;
       setActiveNav('welcome');
     }
@@ -57,14 +61,14 @@
     function showManual() {
       dynamicRoot.innerHTML = `
         <h2>Manual de usuario</h2>
-        <iframe src="{{ url_for('static', filename='manual.pdf') }}" width="100%" height="600px" style="border:none;"></iframe>
+        <iframe src="{{ url_for('static', filename='manual.pdf') }}" width="100%" height="600px" style="border:none; background:white;"></iframe>
       `;
       setActiveNav('manual');
     }
 
     function showAnalysis() {
       dynamicRoot.innerHTML = `
-        <h2>Análisis de código Java</h2>
+        <h2 class="mb-3">Análisis de código Java</h2>
         <textarea id="code-input" class="form-control mb-3" rows="12" placeholder="// Pega tu código Java aquí"></textarea>
         <button id="btn-send" class="btn btn-primary mb-3">Analizar código</button>
         <div id="analysis-results"></div>
@@ -85,23 +89,84 @@
         })
         .then(r => r.json())
         .then(json => {
-          let html = '<h4>Tokens detectados:</h4>';
-          if(json.tokens && json.tokens.length > 0) {
-            html += '<ul>';
-            json.tokens.forEach(t => html += `<li>${t.lexeme} — ${t.category} (Línea ${t.line})</li>`);
-            html += '</ul>';
+          let html = `
+            <div class="row">
+              <div class="col-md-4 mb-4">
+                <h4>Tokens detectados</h4>
+                <div class="p-2 border rounded bg-dark text-light" style="max-height:400px; overflow-y:auto;">
+          `;
+
+          if (json.tokens && json.tokens.length > 0) {
+            html += `<table class="table table-sm table-striped table-dark mb-0">
+              <thead><tr><th>Lexema</th><th>Categoría</th><th>Línea</th></tr></thead><tbody>`;
+            json.tokens.forEach(t => {
+              html += `<tr><td>${t.lexeme}</td><td>${t.category}</td><td>${t.line}</td></tr>`;
+            });
+            html += `</tbody></table>`;
           } else {
-            html += '<p>No se detectaron tokens.</p>';
+            html += `<p>No se detectaron tokens.</p>`;
           }
 
-          html += `<h4>Errores:</h4><pre>${json.errors ? json.errors.join("\n") : 'No hay errores'}</pre>`;
+          html += `
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-4">
+                <h4>Errores</h4>
+                <div class="p-2 border rounded bg-dark text-light" style="max-height:400px; overflow-y:auto;">
+          `;
+
+          if (json.errors && json.errors.length > 0) {
+            html += `<pre>${json.errors.join("\n")}</pre>`;
+          } else {
+            html += `<p>Sin errores léxicos o sintácticos.</p>`;
+          }
+
+          html += `
+                </div>
+              </div>
+
+              <div class="col-md-4 mb-4">
+                <h4>Árbol de derivación</h4>
+                <div class="p-2 border rounded bg-dark text-center">
+          `;
+
+          if (json.tree_image) {
+            html += `<img src="/${json.tree_image}?t=${Date.now()}" class="img-fluid border" alt="Árbol de derivación">`;
+          } else {
+            html += `<p>No se pudo generar el árbol.</p>`;
+          }
+
+          html += `
+                </div>
+              </div>
+            </div>
+          `;
+
           results.innerHTML = html;
         })
         .catch(err => {
-          results.innerHTML = `<p style="color:red;">Error al procesar el código: ${err.message}</p>`;
+          results.innerHTML = `<p class="text-danger">Error al procesar el código: ${err.message}</p>`;
         });
       });
     }
+
+    // Show Architecture Diagram
+    function showArchitecture() {
+      dynamicRoot.innerHTML = `
+        <h2>Diagrama de Arquitectura del Sistema</h2>
+        <p class="text-muted">Visualización del diseño estructural del Analizador Sintáctico.</p>
+        <div class="text-center mt-4">
+          <iframe src="{{ url_for('static', filename='Images/arquitectura.drawio.svg') }}"
+                  width="100%" height="600px" style="border:none; background:white;">
+          </iframe>
+          <p class="mt-3 text-light small">Si el diagrama no se muestra, exporta tu archivo de Draw.io como
+          <strong>.svg</strong> o <strong>.png</strong> y guárdalo en <code>Front/static/Images/arquitectura.*</code></p>
+        </div>
+      `;
+      setActiveNav('architecture');
+    }
+
 
     // ---------- Navigation ----------
     function setActiveNav(view) {
@@ -114,9 +179,10 @@
       link.addEventListener('click', e => {
         e.preventDefault();
         const view = link.dataset.view;
-        if(view === 'welcome') showWelcome();
-        if(view === 'manual') showManual();
-        if(view === 'analysis') showAnalysis();
+        if (view === 'welcome') showWelcome();
+        if (view === 'manual') showManual();
+        if (view === 'analysis') showAnalysis();
+        if (view === 'architecture') showArchitecture();
       });
     });
 

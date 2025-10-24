@@ -1,0 +1,18 @@
+public class Ciclos {
+    int contador;
+
+    public void recorrer() {
+        contador = 0;
+        while (contador < 5) {
+            contador = contador + 1;
+        }
+
+        for (contador = 0; contador < 3; contador = contador + 1) {
+            if (contador == 2) {
+                break;
+            }
+        }
+
+        return;
+    }
+}

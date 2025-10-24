@@ -1,0 +1,16 @@
+public class Test {
+    double x;
+    double y;
+
+    public double area(double base, double altura) {
+        double res = base * altura / 2;
+        return res;
+    }
+
+    public void main() {
+        x = 3.0;
+        y = 5.5;
+        double resultado = area(x, y);
+        return;
+    }
+}

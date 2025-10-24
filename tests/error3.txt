@@ -1,0 +1,9 @@
+public class Faltante {
+    boolean activo;
+
+    public void iniciar() {
+        if (activo) {
+            return;
+        } else
+    }
+}

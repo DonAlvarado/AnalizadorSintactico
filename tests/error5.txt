@@ -1,0 +1,9 @@
+public class Locura {
+    public void test() {
+        int a = 10
+        int b = 5;
+        if (a > b {
+            return;
+        }
+    }
+}

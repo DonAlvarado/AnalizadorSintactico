@@ -1,10 +1,8 @@
-# parser.py
 from dataclasses import dataclass
-from typing import Any, List, Optional
-
-from .lexer import Lexer, Token
-from .parser_generator import ParserGenerator
-from .grammar import GRAMMAR, START_SYMBOL, EPS
+from typing import Any, List, Optional, Tuple
+from app.Back.lexer import Lexer, Token
+from app.Back.parser_generator import ParserGenerator
+from app.Back.grammar import GRAMMAR, START_SYMBOL, EPS
 
 @dataclass
 class Node:
@@ -20,74 +18,67 @@ class Parser:
         self.tokens = tokens
         self.pos = 0
         self.curr = tokens[0]
-        self.pg = ParserGenerator()
-        gen = self.pg.generate()
+        gen = ParserGenerator().generate()
         self.table = gen["table"]
         self.follow = gen["follow"]
         self.errors: List[str] = []
 
     def advance(self):
-        if self.pos < len(self.tokens)-1:
+        if self.pos < len(self.tokens) - 1:
             self.pos += 1
             self.curr = self.tokens[self.pos]
 
-    def parse(self):
+    def parse(self) -> Tuple[Node, List[str]]:
         root = Node(START_SYMBOL)
         self._parse_nonterm(START_SYMBOL, root)
         return root, self.errors
 
     def _parse_nonterm(self, A: str, parent: Node):
         a = self.curr.type
-        key = (A, a)
-        prod = None
-        if key in self.table:
-            prod = self.table[key]
-        else:
-            # try special-case: if token is 'id' and table has entries for (A, '(') etc. attempt to map by value
-            # fallback to panic-mode
-            self.errors.append(f"Syntax error: no rule for ({A}, {a}) at {self.curr.line}:{self.curr.col}")
+        prod = self.table.get((A, a))
+        if not prod:
+            self.errors.append(f"[Línea {self.curr.line}] Error sintáctico: token inesperado '{self.curr.value}'.")
             follow_set = self.follow.get(A, set())
-            while self.curr.type not in follow_set and self.curr.type != "$":
-                self.advance()
-            return
+            # Bug de mostrar mas errores en los errores
+            if self.curr.type == "$":
+                return
 
+            while self.curr.type not in follow_set:
+                self.advance()
+                if self.curr.type == "$":
+                    return
+            return
+        
         if prod == [EPS]:
             parent.children.append(Node(EPS))
             return
 
         for sym in prod:
-            if sym in GRAMMAR:  # nonterminal
+            if sym in EPS:
+                parent.children.append(Node(EPS))
+                continue
+
+            if sym in GRAMMAR:
                 node = Node(sym)
                 parent.children.append(node)
                 self._parse_nonterm(sym, node)
             else:
-                # terminal expected
-                if sym == self.curr.type:
+                if self.curr.type == sym:
                     node = Node(sym, token=self.curr)
                     parent.children.append(node)
                     self.advance()
                 else:
-                    # special: many grammar terminals are literal strings and sometimes token types match value
-                    # attempt match by value (e.g., token type '+' has type '+')
-                    if self.curr.type == sym:
-                        node = Node(sym, token=self.curr)
-                        parent.children.append(node)
-                        self.advance()
+                    self.errors.append(f"[Línea {self.curr.line}] Falta '{sym}' antes de '{self.curr.value}'.")
+                    if self.curr.type == "$":
+                        parent.children.append(Node(sym))
                     else:
-                        # mismatch: report and attempt single-token delete recovery
-                        self.errors.append(f"Syntax error: expected '{sym}', found '{self.curr.type}' at {self.curr.line}:{self.curr.col}")
-                        if self.curr.type == "$":
-                            parent.children.append(Node(sym))
-                        else:
+                        self.advance()
+                        if self.curr.type == sym:
+                            node = Node(sym, token=self.curr)
+                            parent.children.append(node)
                             self.advance()
-                            # try to match again
-                            if self.curr.type == sym:
-                                node = Node(sym, token=self.curr)
-                                parent.children.append(node)
-                                self.advance()
-                            else:
-                                parent.children.append(Node(sym))
-        return
+                        else:
+                            parent.children.append(Node(sym))
 
 def print_tree(node: Node, indent=0):
     pad = "  " * indent
@@ -98,23 +89,27 @@ def print_tree(node: Node, indent=0):
     else:
         print(f"{pad}{node.symbol}")
         for c in node.children:
-            print_tree(c, indent+1)
+            print_tree(c, indent + 1)
 
+
+#Esto es para hacer pruebas con el parser en vez de andar levantando el servidor
 if __name__ == "__main__":
     import sys
     if len(sys.argv) < 2:
-        print("Uso: python parser.py archivo.java")
+        print("Uso: python -m app.Back.parser programa.txt")
         sys.exit(1)
     with open(sys.argv[1], "r", encoding="utf-8") as f:
         text = f.read()
     lex = Lexer(text)
     tokens = lex.lex()
     if lex.errors:
-        print("Lexer errors:", lex.errors)
+        print("Lexer errors:")
+        for e in lex.errors:
+            print("-", e)
     p = Parser(tokens)
     tree, errs = p.parse()
     print_tree(tree)
     if errs:
-        print("\nErrors:")
+        print("\nSyntax errors:")
         for e in errs:
             print("-", e)

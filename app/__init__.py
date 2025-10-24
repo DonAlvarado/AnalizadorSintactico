@@ -11,8 +11,7 @@ def create_app():
     app = Flask(__name__, template_folder=template_folder, static_folder=static_folder)
     CORS(app)
 
-    # Registramos ambos blueprints
-    app.register_blueprint(routes.bp)   # rutas normales
-    app.register_blueprint(routes.bp2)  # rutas API
+    app.register_blueprint(routes.bp)
+    app.register_blueprint(routes.bp2)
 
     return app

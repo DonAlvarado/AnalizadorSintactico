@@ -17,7 +17,6 @@
       margin:0;
     }
 
-    /* Header */
     header.navbar{
       background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
       border-bottom: 1px solid rgba(255,255,255,0.03);
@@ -25,7 +24,6 @@
     }
     .brand { font-weight:700; color:var(--accent); letter-spacing:0.6px; }
 
-    /* Layout */
     .sidebar {
       min-width: 240px;
       max-width: 280px;
@@ -58,7 +56,6 @@
       box-shadow: 0 8px 30px rgba(2,6,23,0.6);
     }
 
-    /* Tiny decorative banner */
     .project-banner {
       display:flex;
       gap:1rem;
@@ -72,7 +69,6 @@
     .muted { color: var(--muted); }
     .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; }
 
-    /* Editor */
     .code-frame {
       background: #071026;
       border-radius: 8px;
@@ -92,7 +88,6 @@
       outline:none;
     }
 
-    /* PDF viewer responsive */
     .pdf-frame {
       width:100%;
       height:650px;
@@ -102,7 +97,6 @@
       overflow:hidden;
     }
 
-    /* Results */
     .results-panel {
       margin-top:1rem;
       display:flex;
@@ -114,10 +108,8 @@
       min-width:280px;
     }
 
-    /* Small helpers */
     .small-muted { font-size:0.9rem; color: #9aa4b2; }
 
-    /* animation */
     .fade-in { animation: fadeIn .28s ease both; }
     @keyframes fadeIn { from { opacity:0; transform: translateY(6px);} to {opacity:1; transform:none;} }
 
@@ -127,14 +119,12 @@
       font-weight: 600;
     }
 
-/* Aplicar color a todos los elementos <code> */
 code,
 pre code {
   color: #df6ff3 !important;
   font-weight: 600;
 }
 
-/* Asegurar coincidencia dentro de contenedores mono */
 .mono code {
   color: #df6ff3 !important;
 }

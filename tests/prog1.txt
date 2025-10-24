@@ -1,0 +1,18 @@
+import java.util.*;
+
+public class Calculadora {
+    int a;
+    int b;
+
+    public int sumar(int x, int y) {
+        int r = x + y;
+        return r;
+    }
+
+    public void ejecutar() {
+        a = 10;
+        b = 5;
+        int resultado = sumar(a, b);
+        return;
+    }
+}

@@ -1,18 +1,15 @@
-# parser_generator.py
 from typing import Dict, List, Set, Tuple
-
-from .grammar import GRAMMAR, START_SYMBOL, EPS, get_terminals, get_nonterminals
-
+from app.Back.grammar import GRAMMAR, START_SYMBOL, EPS, get_terminals
 
 class ParserGenerator:
     def __init__(self, grammar=None):
         self.grammar = grammar if grammar is not None else GRAMMAR
         self.nonterms = list(self.grammar.keys())
-        self.terminals = get_terminals()
+        self.terminals = sorted(set(get_terminals() + ["$"]))
         self.first: Dict[str, Set[str]] = {nt: set() for nt in self.nonterms}
         self.follow: Dict[str, Set[str]] = {nt: set() for nt in self.nonterms}
-        self.table: Dict[Tuple[str,str], List[str]] = {}
-        self.conflicts = []
+        self.table: Dict[Tuple[str, str], List[str]] = {}
+        self.conflicts: List[Tuple[str, str, List[str], List[str]]] = []
 
     def compute_first(self):
         changed = True
@@ -22,13 +19,14 @@ class ParserGenerator:
                 for prod in prods:
                     if prod == [EPS]:
                         if EPS not in self.first[A]:
-                            self.first[A].add(EPS); changed = True
+                            self.first[A].add(EPS)
+                            changed = True
                         continue
+
                     add_eps = True
                     for X in prod:
-                        if X in self.grammar:  # nonterminal
+                        if X in self.grammar:
                             before = len(self.first[A])
-                            # add FIRST(X) minus EPS
                             self.first[A].update(self.first[X] - {EPS})
                             if EPS not in self.first[X]:
                                 add_eps = False
@@ -36,17 +34,32 @@ class ParserGenerator:
                             if len(self.first[A]) != before:
                                 changed = True
                         else:
-                            # terminal
                             if X not in self.first[A]:
-                                self.first[A].add(X); changed = True
+                                self.first[A].add(X)
+                                changed = True
                             add_eps = False
                             break
-                    if add_eps:
-                        if EPS not in self.first[A]:
-                            self.first[A].add(EPS); changed = True
+
+                    if add_eps and EPS not in self.first[A]:
+                        self.first[A].add(EPS)
+                        changed = True
+
+        stable = False
+        while not stable:
+            stable = True
+            for A, prods in self.grammar.items():
+                before = len(self.first[A])
+                for prod in prods:
+                    if prod and prod[0] in self.grammar:
+                        self.first[A].update(self.first[prod[0]] - {EPS})
+                if len(self.first[A]) != before:
+                    stable = False
 
     def first_of_sequence(self, seq: List[str]) -> Set[str]:
-        res = set()
+        res: Set[str] = set()
+        if not seq:
+            res.add(EPS)
+            return res
         for X in seq:
             if X in self.grammar:
                 res.update(self.first[X] - {EPS})
@@ -67,7 +80,7 @@ class ParserGenerator:
                 for prod in prods:
                     for i, B in enumerate(prod):
                         if B in self.grammar:
-                            beta = prod[i+1:]
+                            beta = prod[i + 1 :]
                             first_beta = self.first_of_sequence(beta)
                             before = len(self.follow[B])
                             self.follow[B].update(first_beta - {EPS})
@@ -76,6 +89,7 @@ class ParserGenerator:
                             if len(self.follow[B]) != before:
                                 changed = True
 
+    # Aqui se construye la tabla LL
     def build_table(self):
         for A, prods in self.grammar.items():
             for prod in prods:
@@ -91,7 +105,9 @@ class ParserGenerator:
                         if key in self.table:
                             self.conflicts.append((A, b, self.table[key], prod))
                         self.table[key] = prod
+        self.table[("ElseOpt", "else")] = ["else", "Stmt"]
 
+    # Aqui se genera la tabla
     def generate(self):
         self.compute_first()
         self.compute_follow()
@@ -100,19 +116,5 @@ class ParserGenerator:
             "first": self.first,
             "follow": self.follow,
             "table": self.table,
-            "conflicts": self.conflicts
+            "conflicts": self.conflicts,
         }
-
-if __name__ == "__main__":
-    pg = ParserGenerator()
-    res = pg.generate()
-    print("FIRST")
-    for k,v in res["first"].items():
-        print(k, "->", v)
-    print("\nFOLLOW")
-    for k,v in res["follow"].items():
-        print(k, "->", v)
-    if res["conflicts"]:
-        print("\nConflicts found:", res["conflicts"])
-    else:
-        print("\nNo conflicts.")
